@@ -21,7 +21,7 @@ df -h /work
 bash /recipe/scripts/prepare.sh
 bash /recipe/scripts/check-kernel.sh /work/src
 source build/envsetup.sh
-breakfast lineage_a8elte-userdebug
+lunch lineage_a8elte-userdebug || { find device vendor -maxdepth 6 -name AndroidProducts.mk | head; exit 1; }
 mka -j4 halium-boot
 mka -j4 systemimage
 mkdir -p /work/out

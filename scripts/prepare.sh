@@ -15,3 +15,7 @@ MK
 echo 'PRODUCT_MAKEFILES := $(LOCAL_DIR)/lineage_a8elte.mk' > $D/AndroidProducts.mk
 rm -f $D/cm.mk
 echo 'add_lunch_combo lineage_a8elte-userdebug' > $D/vendorsetup.sh
+# Kernel tree lacks a directory its Kconfig references: add an empty stub
+K=kernel/samsung/slte/arch/arm/mach-mvebu
+[ -f $K/Kconfig ] || { mkdir -p $K; touch $K/Kconfig; }
+echo "--- product diagnostics"; ls -la $D/*.mk $D/vendorsetup.sh; cat $D/AndroidProducts.mk $D/lineage_a8elte.mk
