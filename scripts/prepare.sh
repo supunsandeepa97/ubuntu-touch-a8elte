@@ -4,7 +4,7 @@ set -ex
 D=device/samsung/slte
 ln -sfn a8elte vendor/samsung/slte
 for f in vendor/samsung/a8elte/*.mk; do sed -i 's#vendor/samsung/slte#vendor/samsung/a8elte#g' "$f"; done
-sed -i 's#^TARGET_KERNEL_CONFIG .*#TARGET_KERNEL_CONFIG := cyanogenmod_a8eltejv_defconfig#' $D/BoardConfig.mk
+sed -i 's#^TARGET_KERNEL_CONFIG .*#TARGET_KERNEL_CONFIG := exynos5430_a8elte_kor_skt_defconfig#' $D/BoardConfig.mk
 cat > $D/lineage_a8elte.mk <<'MK'
 $(call inherit-product, device/samsung/slte/device_slte.mk)
 PRODUCT_NAME := lineage_a8elte
