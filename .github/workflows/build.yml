@@ -1,0 +1,37 @@
+name: build-halium-a8elte
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free disk space
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache /usr/local/share/boost /usr/share/swift
+          sudo docker image prune -af || true
+          df -h /
+      - name: Work dir
+        run: |
+          sudo mkdir -p /mnt/work
+          sudo chown -R $(id -u):$(id -g) /mnt/work
+          df -h / /mnt
+      - name: Build in Ubuntu 18.04 container
+        run: docker run --rm -v /mnt/work:/work -v $GITHUB_WORKSPACE:/recipe -w /work ubuntu:18.04 bash /recipe/scripts/container-build.sh 2>&1 | tee /mnt/work/build.log
+      - name: Disk report
+        if: always()
+        run: df -h / /mnt; du -sh /mnt/work/* 2>/dev/null | sort -h | tail
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-log
+          path: /mnt/work/build.log
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        with:
+          name: a8elte-halium-images
+          path: |
+            /mnt/work/out/halium-boot.img
+            /mnt/work/out/system.img
+          if-no-files-found: error

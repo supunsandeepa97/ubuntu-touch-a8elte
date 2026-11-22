@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Halium 7.1 local manifest for Galaxy A8 (2015) a8elte. Open-source recipe only. -->
+<manifest>
+  <remote name="shubham540" fetch="https://github.com/shubham540" revision="cm-14.1"/>
+  <remote name="lineage" fetch="https://github.com/LineageOS" revision="cm-14.1"/>
+  <project path="device/samsung/slte" name="android_device_samsung_a8elte" remote="shubham540" revision="cm-14.1" clone-depth="1"/>
+  <project path="kernel/samsung/slte" name="android_kernel_samsung_a8elte" remote="shubham540" revision="cm-13.0" clone-depth="1"/>
+  <project path="vendor/samsung/a8elte" name="android_vendor_samsung_a8elte" remote="shubham540" revision="cm-13.0" clone-depth="1"/>
+  <project path="external/stlport" name="android_external_stlport" remote="lineage" clone-depth="1"/>
+  <project path="hardware/samsung" name="android_hardware_samsung" remote="lineage" clone-depth="1"/>
+  <project path="hardware/samsung_slsi-cm/exynos" name="android_hardware_samsung_slsi-cm_exynos" remote="lineage" clone-depth="1"/>
+  <project path="hardware/samsung_slsi-cm/exynos5" name="android_hardware_samsung_slsi-cm_exynos5" remote="lineage" clone-depth="1"/>
+  <project path="hardware/samsung_slsi-cm/openmax" name="android_hardware_samsung_slsi-cm_openmax" remote="lineage" clone-depth="1"/>
+  <project path="hardware/samsung_slsi-cm/exynos5430" name="android_hardware_samsung_slsi-cm_exynos5430" remote="lineage" clone-depth="1"/>
+</manifest>
