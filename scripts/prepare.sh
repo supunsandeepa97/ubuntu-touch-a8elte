@@ -36,6 +36,8 @@ grep -rn "GUD_ROOT_FOLDER :=" kernel/samsung/slte/drivers/gud | head
 for OUTD in /tmp/kout-stub /work/src/out/target/product/slte/obj/KERNEL_OBJ; do
   (cd kernel/samsung/slte && find . -type d -not -path './.git*' | while read -r d; do mkdir -p "$OUTD/$d"; done)
 done
+# libMcClient (Samsung secure-world client) has no source here; drop it from hardware libs (only needed for protected video)
+grep -rl "libMcClient" --include=Android.mk hardware device 2>/dev/null | xargs -r sed -i -e '/^[[:space:]]*LOCAL_SHARED_LIBRARIES[[:space:]]*+=[[:space:]]*libMcClient[[:space:]]*$/d' -e 's/[[:space:]]libMcClient\b//g'
 # gcc 4.8 flags warnings in Samsung code; do not treat warnings as errors in the kernel build
 KM=kernel/samsung/slte
 for f in $KM/Makefile $KM/arch/arm/Makefile; do sed -i -E 's/(^|[[:space:]])-Werror([[:space:]]|$)/ /g' $f; done
