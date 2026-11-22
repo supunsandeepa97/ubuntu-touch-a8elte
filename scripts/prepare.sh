@@ -29,5 +29,9 @@ if grep -q "tima_uevent/tima_uevent.o" $KS/Makefile; then
   cp $KS/tima_uevent/tima_uevent.c $KS/tima_uevent/tima_uevent.h $KS/
   sed -i 's#tima_uevent/tima_uevent.o#tima_uevent.o#' $KS/Makefile
 fi
+# gcc 4.8 flags warnings in Samsung code; do not treat warnings as errors in the kernel build
+KM=kernel/samsung/slte
+for f in $KM/Makefile $KM/arch/arm/Makefile; do sed -i -E 's/(^|[[:space:]])-Werror([[:space:]]|$)/ /g' $f; done
+echo 'KBUILD_CFLAGS += -Wno-error' >> $KM/Makefile
 # Restore stock Linux 3.10 files the Samsung kernel repo lacks (compile once with host cross-gcc to find them)
 bash /recipe/scripts/fetch-missing.sh "$PWD/kernel/samsung/slte" O=/tmp/kout-stub -j4 KCFLAGS=-Wno-error CROSS_COMPILE=$PWD/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi- zImage || true

@@ -18,6 +18,7 @@ for i in $(seq 1 400); do
   out=$(make "$@" 2>&1) && { echo "make OK after $((i-1)) fetches"; exit 0; }
   p=$(echo "$out" | grep -oE "No rule to make target [\`']([^'\`]*)['\`]" | head -1 | sed -E "s/.*[\`']([^'\`]*)['\`]/\1/")
   [ -z "$p" ] && p=$(echo "$out" | grep -oE "[^ :]+: No such file or directory" | head -1 | sed 's/: No such.*//')
+  p=$(echo "$p" | tr -d "'\`")
   p=${p#$PWD/}; p=${p#$K/}
   if [ -z "$p" ]; then echo "$out" | tail -25; exit 1; fi
   if [[ "$p" != */* ]]; then
@@ -36,6 +37,7 @@ for i in $(seq 1 400); do
   for cand in "$p" "${p%.o}.c" "${p%.o}.S"; do
     if [ -f "$MAIN/$cand" ]; then mkdir -p "$(dirname "$cand")"; cp "$MAIN/$cand" "$cand"; echo "fetched $cand"; got=1; break; fi
   done
+  if [ $got = 0 ] && [[ "$(basename "$p")" != *.* ]]; then mkdir -p "$p"; echo "made dir $p"; got=1; fi
   [ $got = 1 ] || { echo "cannot fetch $p"; echo "$out" | tail -15; exit 1; }
 done
 exit 1
