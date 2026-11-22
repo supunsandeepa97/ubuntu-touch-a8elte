@@ -24,4 +24,4 @@ echo "--- product diagnostics"; ls -la device/samsung/a8elte/; cat device/samsun
 grep -rlE "COMMON_GLOBAL_C(PP)?FLAGS" device/samsung vendor/samsung hardware/samsung* 2>/dev/null | xargs -r sed -i -E 's/COMMON_GLOBAL_C(PP)?FLAGS/BOARD_GLOBAL_C\1FLAGS/g'
 cp /recipe/scripts/fetch-missing.sh /tmp/fetch-missing.sh
 # Restore stock Linux 3.10 files the Samsung kernel repo lacks (compile once with host cross-gcc to find them)
-bash /recipe/scripts/fetch-missing.sh "$PWD/kernel/samsung/slte" O=/tmp/kout-stub -j4 CROSS_COMPILE=arm-linux-gnueabihf- zImage || true
+bash /recipe/scripts/fetch-missing.sh "$PWD/kernel/samsung/slte" O=/tmp/kout-stub -j4 KCFLAGS=-Wno-error CROSS_COMPILE=$PWD/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi- zImage || true

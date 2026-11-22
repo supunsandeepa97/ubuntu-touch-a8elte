@@ -5,7 +5,7 @@ apt-get update
 apt-get install -y git curl python python3 openjdk-8-jdk bc bison build-essential flex g++-multilib gcc-multilib \
   gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev \
   libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev unzip \
-  libgl1-mesa-dev gcc-arm-linux-gnueabihf openssl android-tools-fsutils cpio kmod libarchive-tools
+  libgl1-mesa-dev openssl android-tools-fsutils cpio kmod libarchive-tools
 export LC_ALL=C USE_CCACHE=0 ALLOW_MISSING_DEPENDENCIES=true
 git config --global user.email ci@example.invalid
 git config --global user.name ci

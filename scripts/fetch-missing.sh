@@ -8,7 +8,7 @@ if [ ! -d "$MAIN/arch" ]; then
   curl -sfL --retry 3 https://github.com/torvalds/linux/archive/refs/tags/v3.10.tar.gz | tar xz -C "$MAIN" --strip-components=1
 fi
 cd "$K"
-export ARCH=arm ANDROID_MAJOR_VERSION=n KCFLAGS="-Wno-error -fno-pie"
+export ARCH=arm ANDROID_MAJOR_VERSION=n KCFLAGS="${KCFLAGS--Wno-error -fno-pie}"
 for i in $(seq 1 400); do
   out=$(make "$@" 2>&1) && { echo "make OK after $((i-1)) fetches"; exit 0; }
   p=$(echo "$out" | grep -oE "No rule to make target [\`']([^'\`]*)['\`]" | head -1 | sed -E "s/.*[\`']([^'\`]*)['\`]/\1/")
