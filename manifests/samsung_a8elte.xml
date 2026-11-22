@@ -16,4 +16,5 @@
   <project path="hardware/samsung_slsi-cm/openmax" name="android_hardware_samsung_slsi-cm_openmax" remote="lineage" clone-depth="1"/>
   <remote name="serenitys" fetch="https://github.com/SerenityS" revision="cm-14.1"/>
   <project path="hardware/samsung_slsi-cm/exynos5430" name="android_hardware_samsung_slsi-cm_exynos5430" remote="serenitys" revision="cm-14.1" clone-depth="1"/>
+  <project path="device/generic/goldfish" name="android_device_generic_goldfish" remote="lineage" revision="cm-14.1" clone-depth="1"/>
 </manifest>
