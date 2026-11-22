@@ -59,6 +59,9 @@ BOARD_SEPOLICY_REPLACE :=
 BOARD_SEPOLICY_M4DEFS :=
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 0x01400000
 SEP
+# Samsung userspace HALs include exynos kernel uapi headers that the Kbuild list omits: export them too
+KU=kernel/samsung/slte/include/uapi/linux
+for f in $KU/*exynos*.h; do b=$(basename "$f"); grep -q "header-y += $b" $KU/Kbuild || echo "header-y += $b" >> $KU/Kbuild; done
 # Device headers use C-style casts; Android 7 clang builds with -Werror. Silence those warnings inside these headers only.
 for h in device/samsung/slte/include/hardware/gralloc.h device/samsung/slte/include/hardware/gps.h device/samsung/slte/include/telephony/ril.h device/samsung/slte/include/camera/CameraParametersExtra.h device/samsung/slte/include/fd_utils-inl-extra.h; do
   [ -f "$h" ] && sed -i '1i #if defined(__clang__)\n#pragma clang diagnostic ignored "-Wold-style-cast"\n#pragma clang diagnostic ignored "-Wunused-parameter"\n#pragma clang diagnostic ignored "-Wsign-compare"\n#endif' "$h"
