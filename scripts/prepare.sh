@@ -12,6 +12,8 @@ while read -r opt; do
   sed -i "/^# $opt is not set\$/d;/^$opt=/d" $DEFC
   echo "$opt=y" >> $DEFC
 done < /recipe/scripts/halium-kernel-options.txt
+# AppArmor (mainline 3.10 code) uses current->no_new_privs; this Samsung kernel has the newer task_no_new_privs() accessor
+sed -i 's/current->no_new_privs/task_no_new_privs(current)/g' kernel/samsung/slte/security/apparmor/domain.c
 mkdir -p device/samsung/a8elte
 cat > device/samsung/a8elte/lineage.mk <<'MK'
 $(call inherit-product, device/samsung/slte/device_slte.mk)
