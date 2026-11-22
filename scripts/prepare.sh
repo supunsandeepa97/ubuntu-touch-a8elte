@@ -50,6 +50,14 @@ bash /recipe/scripts/fetch-missing.sh "$PWD/kernel/samsung/slte" O=/tmp/kout-stu
 echo '# libril skipped for first bootable image' > hardware/samsung/ril/libril/Android.mk   # keep libsecril-client: the audio HAL links against it
 find hardware/ril -name Android.mk -delete 2>/dev/null || true
 echo '# telephony stack skipped for first bootable image' > hardware/ril/Android.mk
+# Device SELinux policy violates Android 7 neverallow rules; Halium runs without it: clear the device policy lists
+cat >> device/samsung/slte/BoardConfig.mk <<'SEP'
+
+BOARD_SEPOLICY_DIRS :=
+BOARD_SEPOLICY_UNION :=
+BOARD_SEPOLICY_REPLACE :=
+BOARD_SEPOLICY_M4DEFS :=
+SEP
 # Device headers use C-style casts; Android 7 clang builds with -Werror. Silence those warnings inside these headers only.
 for h in device/samsung/slte/include/hardware/gralloc.h device/samsung/slte/include/hardware/gps.h device/samsung/slte/include/telephony/ril.h device/samsung/slte/include/camera/CameraParametersExtra.h device/samsung/slte/include/fd_utils-inl-extra.h; do
   [ -f "$h" ] && sed -i '1i #if defined(__clang__)\n#pragma clang diagnostic ignored "-Wold-style-cast"\n#pragma clang diagnostic ignored "-Wunused-parameter"\n#pragma clang diagnostic ignored "-Wsign-compare"\n#endif' "$h"
