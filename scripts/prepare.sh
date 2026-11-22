@@ -57,6 +57,7 @@ BOARD_SEPOLICY_DIRS :=
 BOARD_SEPOLICY_UNION :=
 BOARD_SEPOLICY_REPLACE :=
 BOARD_SEPOLICY_M4DEFS :=
+BOARD_RECOVERYIMAGE_PARTITION_SIZE := 0x01400000
 SEP
 # Device headers use C-style casts; Android 7 clang builds with -Werror. Silence those warnings inside these headers only.
 for h in device/samsung/slte/include/hardware/gralloc.h device/samsung/slte/include/hardware/gps.h device/samsung/slte/include/telephony/ril.h device/samsung/slte/include/camera/CameraParametersExtra.h device/samsung/slte/include/fd_utils-inl-extra.h; do
