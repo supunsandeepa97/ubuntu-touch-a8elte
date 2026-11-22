@@ -49,6 +49,8 @@ bash /recipe/scripts/fetch-missing.sh "$PWD/kernel/samsung/slte" O=/tmp/kout-stu
 # Samsung RIL (modem/telephony) needs a merged ril.h (vendor + Android 7 constants). Skip it for the first bootable image; TODO restore for calls/SMS/data.
 find hardware/samsung/ril -name Android.mk -delete
 echo '# Samsung RIL skipped for first bootable image' > hardware/samsung/ril/Android.mk
+find hardware/ril -name Android.mk -delete 2>/dev/null || true
+echo '# telephony stack skipped for first bootable image' > hardware/ril/Android.mk
 # Device headers use C-style casts; Android 7 clang builds with -Werror. Silence those warnings inside these headers only.
 for h in device/samsung/slte/include/hardware/gralloc.h device/samsung/slte/include/hardware/gps.h device/samsung/slte/include/telephony/ril.h device/samsung/slte/include/camera/CameraParametersExtra.h device/samsung/slte/include/fd_utils-inl-extra.h; do
   [ -f "$h" ] && sed -i '1i #if defined(__clang__)\n#pragma clang diagnostic ignored "-Wold-style-cast"\n#pragma clang diagnostic ignored "-Wunused-parameter"\n#pragma clang diagnostic ignored "-Wsign-compare"\n#endif' "$h"
