@@ -45,6 +45,7 @@ grep -rlE "$MCLIBS" --include=Android.mk --include='*.mk' hardware device 2>/dev
 GS=hardware/samsung_slsi-cm/exynos5/libgscaler
 cat > $GS/cp_stub.cpp <<'CPS'
 #include <stdint.h>
+#include <sys/cdefs.h>
 #include "content_protect.h"
 extern "C" cpResult_t CP_Enable_Path_Protection(uint32_t protect_ip) { (void)protect_ip; return CP_SUCCESS; }
 extern "C" cpResult_t CP_Disable_Path_Protection(uint32_t protect_ip) { (void)protect_ip; return CP_SUCCESS; }
