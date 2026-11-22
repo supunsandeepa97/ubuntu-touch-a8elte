@@ -37,7 +37,8 @@ for OUTD in /tmp/kout-stub /work/src/out/target/product/slte/obj/KERNEL_OBJ; do
   (cd kernel/samsung/slte && find . -type d -not -path './.git*' | while read -r d; do mkdir -p "$OUTD/$d"; done)
 done
 # MobiCore (secure world) daemon/libs: broken Android.mk and not needed for Halium
-rm -rf hardware/samsung_slsi-cm/exynos5430/mobicore
+MC=hardware/samsung_slsi-cm/exynos5430/mobicore
+if [ -d $MC/daemon ]; then find $MC/daemon -name Android.mk -delete; echo '# mobicore daemon skipped' > $MC/daemon/Android.mk; fi
 # libMcClient (Samsung secure-world client) has no source here; drop it from hardware libs (only needed for protected video)
 grep -rl "libMcClient" --include=Android.mk hardware device 2>/dev/null | xargs -r sed -i -e '/^[[:space:]]*LOCAL_SHARED_LIBRARIES[[:space:]]*+=[[:space:]]*libMcClient[[:space:]]*$/d' -e 's/[[:space:]]libMcClient\b//g'
 # gcc 4.8 flags warnings in Samsung code; do not treat warnings as errors in the kernel build
