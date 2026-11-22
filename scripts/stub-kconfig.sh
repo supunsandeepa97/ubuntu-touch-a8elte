@@ -1,6 +1,6 @@
 #!/bin/bash
 # Usage: stub-kconfig.sh <kernel dir> <defconfig>. Creates empty Kconfig stubs for files the stripped Samsung tree references but lacks.
-cd "$1"
+cd "$1"; mkdir -p /tmp/kout-stub
 export ARCH=arm ANDROID_MAJOR_VERSION=n
 for i in $(seq 1 300); do
   out=$(make O=/tmp/kout-stub "$2" 2>&1) && { echo "defconfig OK after $((i-1)) stubs"; exit 0; }

@@ -11,7 +11,10 @@ for i in $(seq 1 200); do
   p=${p#$PWD/}; p=${p#$K/}
   if [ -z "$p" ]; then echo "$out" | tail -25; exit 1; fi
   mkdir -p "$(dirname "$p")"
-  if curl -sfL "https://raw.githubusercontent.com/torvalds/linux/v3.10/$p" -o "$p"; then echo "fetched $p"
-  else rm -f "$p"; echo "cannot fetch $p"; echo "$out" | tail -15; exit 1; fi
+  got=0
+  for cand in "$p" "${p%.o}.c" "${p%.o}.S"; do
+    if curl -sfL "https://raw.githubusercontent.com/torvalds/linux/v3.10/$cand" -o "$cand"; then echo "fetched $cand"; got=1; break; else rm -f "$cand"; fi
+  done
+  [ $got = 1 ] || { echo "cannot fetch $p"; echo "$out" | tail -15; exit 1; }
 done
 exit 1
