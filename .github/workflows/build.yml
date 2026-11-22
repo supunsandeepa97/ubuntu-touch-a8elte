@@ -29,9 +29,10 @@ jobs:
           path: /mnt/work/build.log
           if-no-files-found: ignore
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: a8elte-halium-images
           path: |
             /mnt/work/out/halium-boot.img
             /mnt/work/out/system.img
-          if-no-files-found: error
+          if-no-files-found: warn

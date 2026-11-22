@@ -46,3 +46,6 @@ for f in $KM/Makefile $KM/arch/arm/Makefile; do sed -i -E 's/(^|[[:space:]])-Wer
 echo 'KBUILD_CFLAGS += -Wno-error' >> $KM/Makefile
 # Restore stock Linux 3.10 files the Samsung kernel repo lacks (compile once with host cross-gcc to find them)
 bash /recipe/scripts/fetch-missing.sh "$PWD/kernel/samsung/slte" O=/tmp/kout-stub -j4 KCFLAGS=-Wno-error CROSS_COMPILE=$PWD/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi- zImage || true
+# apns-conf.xml normally comes from device/generic/goldfish, which Halium's manifest does not include: provide an empty valid one
+mkdir -p device/generic/goldfish/data/etc
+[ -f device/generic/goldfish/data/etc/apns-conf.xml ] || printf '<?xml version="1.0" encoding="utf-8"?>\n<apns version="8">\n</apns>\n' > device/generic/goldfish/data/etc/apns-conf.xml

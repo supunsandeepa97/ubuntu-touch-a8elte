@@ -23,6 +23,8 @@ bash /recipe/scripts/check-kernel.sh /work/src
 source build/envsetup.sh
 lunch lineage_a8elte-userdebug || { find device vendor -maxdepth 6 -name AndroidProducts.mk | head; exit 1; }
 mka -j4 halium-boot
+mkdir -p /work/out
+cp out/target/product/slte/halium-boot.img /work/out/
 mka -j4 systemimage
 mkdir -p /work/out
 cp out/target/product/slte/halium-boot.img out/target/product/slte/system.img /work/out/
