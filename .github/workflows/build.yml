@@ -17,11 +17,23 @@ jobs:
           sudo mkdir -p /mnt/work
           sudo chown -R $(id -u):$(id -g) /mnt/work
           df -h / /mnt
+      - name: Restore compile cache
+        uses: actions/cache/restore@v4
+        with:
+          path: /mnt/work/ccache
+          key: ccache-v1-${{ github.run_id }}
+          restore-keys: ccache-v1-
       - name: Build in Ubuntu 18.04 container
         run: set -o pipefail; docker run --rm -v /mnt/work:/work -v $GITHUB_WORKSPACE:/recipe -w /work ubuntu:18.04 bash /recipe/scripts/container-build.sh 2>&1 | tee /mnt/work/build.log
       - name: Disk report
         if: always()
         run: df -h / /mnt; du -sh /mnt/work/* 2>/dev/null | sort -h | tail
+      - name: Save compile cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: /mnt/work/ccache
+          key: ccache-v1-${{ github.run_id }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
