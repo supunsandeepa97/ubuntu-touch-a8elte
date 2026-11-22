@@ -1,19 +1,26 @@
 #!/bin/bash
 # Usage: fetch-missing.sh <kernel dir> <make args...>
-# The Samsung kernel repo has many stock Linux 3.10 files deleted. Re-fetch any missing file from mainline v3.10 and retry.
+# The Samsung kernel repo has many stock Linux 3.10 files deleted. Copy any missing file from mainline v3.10 and retry.
 K="$1"; shift
+MAIN="${MAINLINE_DIR:-/tmp/linux-3.10}"
+if [ ! -d "$MAIN/arch" ]; then
+  mkdir -p "$MAIN"
+  curl -sfL --retry 3 https://github.com/torvalds/linux/archive/refs/tags/v3.10.tar.gz | tar xz -C "$MAIN" --strip-components=1
+fi
 cd "$K"
-export ARCH=arm ANDROID_MAJOR_VERSION=n
-for i in $(seq 1 200); do
+export ARCH=arm ANDROID_MAJOR_VERSION=n KCFLAGS="-Wno-error -fno-pie"
+for i in $(seq 1 400); do
   out=$(make "$@" 2>&1) && { echo "make OK after $((i-1)) fetches"; exit 0; }
   p=$(echo "$out" | grep -oE "No rule to make target [\`']([^'\`]*)['\`]" | head -1 | sed -E "s/.*[\`']([^'\`]*)['\`]/\1/")
   [ -z "$p" ] && p=$(echo "$out" | grep -oE "[^ :]+: No such file or directory" | head -1 | sed 's/: No such.*//')
   p=${p#$PWD/}; p=${p#$K/}
   if [ -z "$p" ]; then echo "$out" | tail -25; exit 1; fi
-  mkdir -p "$(dirname "$p")"
   got=0
+  if [ ! -f "$MAIN/$p" ] && [[ "$p" != */* ]]; then
+    f=$(cd "$MAIN" && find arch include -name "$p" | head -1); [ -n "$f" ] && p="$f"
+  fi
   for cand in "$p" "${p%.o}.c" "${p%.o}.S"; do
-    if curl -sfL "https://raw.githubusercontent.com/torvalds/linux/v3.10/$cand" -o "$cand"; then echo "fetched $cand"; got=1; break; else rm -f "$cand"; fi
+    if [ -f "$MAIN/$cand" ]; then mkdir -p "$(dirname "$cand")"; cp "$MAIN/$cand" "$cand"; echo "fetched $cand"; got=1; break; fi
   done
   [ $got = 1 ] || { echo "cannot fetch $p"; echo "$out" | tail -15; exit 1; }
 done
