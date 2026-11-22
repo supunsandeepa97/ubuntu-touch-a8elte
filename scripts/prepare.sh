@@ -22,3 +22,4 @@ bash /recipe/scripts/stub-kconfig.sh "$PWD/kernel/samsung/slte" exynos5430_a8elt
 echo "--- product diagnostics"; ls -la device/samsung/a8elte/; cat device/samsung/a8elte/lineage.mk
 # Lineage 14.1/Halium forbids COMMON_GLOBAL_C(PP)FLAGS in device trees
 grep -rlE "COMMON_GLOBAL_C(PP)?FLAGS" device/samsung vendor/samsung hardware/samsung* 2>/dev/null | xargs -r sed -i -E 's/COMMON_GLOBAL_C(PP)?FLAGS/BOARD_GLOBAL_C\1FLAGS/g'
+cp /recipe/scripts/fetch-missing.sh /tmp/fetch-missing.sh
