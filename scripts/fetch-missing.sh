@@ -6,7 +6,7 @@ MAIN="${MAINLINE_DIR:-/tmp/linux-3.10}"
 if [ ! -d "$MAIN/arch" ]; then
   for try in 1 2 3 4 5; do
     rm -rf "$MAIN"; mkdir -p "$MAIN"
-    if curl -fL --retry 5 --retry-all-errors --retry-delay 3 -o /tmp/linux-3.10.tar.gz https://codeload.github.com/torvalds/linux/tar.gz/refs/tags/v3.10        && tar xzf /tmp/linux-3.10.tar.gz -C "$MAIN" --strip-components=1 && [ -d "$MAIN/arch" ]; then break; fi
+    if curl -fL --retry 5 --retry-delay 3 -o /tmp/linux-3.10.tar.gz https://codeload.github.com/torvalds/linux/tar.gz/refs/tags/v3.10        && tar xzf /tmp/linux-3.10.tar.gz -C "$MAIN" --strip-components=1 && [ -d "$MAIN/arch" ]; then break; fi
     echo "mainline download failed (try $try)"; sleep 5
   done
   rm -f /tmp/linux-3.10.tar.gz
