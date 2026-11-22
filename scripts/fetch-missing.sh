@@ -4,8 +4,12 @@
 K="$1"; shift
 MAIN="${MAINLINE_DIR:-/tmp/linux-3.10}"
 if [ ! -d "$MAIN/arch" ]; then
-  mkdir -p "$MAIN"
-  curl -sfL --retry 3 https://github.com/torvalds/linux/archive/refs/tags/v3.10.tar.gz | tar xz -C "$MAIN" --strip-components=1
+  for try in 1 2 3 4 5; do
+    rm -rf "$MAIN"; mkdir -p "$MAIN"
+    if curl -fL --retry 5 --retry-all-errors --retry-delay 3 -o /tmp/linux-3.10.tar.gz https://codeload.github.com/torvalds/linux/tar.gz/refs/tags/v3.10        && tar xzf /tmp/linux-3.10.tar.gz -C "$MAIN" --strip-components=1 && [ -d "$MAIN/arch" ]; then break; fi
+    echo "mainline download failed (try $try)"; sleep 5
+  done
+  rm -f /tmp/linux-3.10.tar.gz
 fi
 cd "$K"
 export ARCH=arm ANDROID_MAJOR_VERSION=n KCFLAGS="${KCFLAGS--Wno-error -fno-pie}"
