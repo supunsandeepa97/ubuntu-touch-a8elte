@@ -41,6 +41,16 @@ done
 rm -rf hardware/samsung_slsi-cm/exynos5430/mobicore hardware/samsung_slsi-cm/exynos5430/libsecurepath
 MCLIBS='libMcClient|libMcRegistry|libsecurepath|libcommonpawrapper|libMcStub|libMcDriverDaemon'
 grep -rlE "$MCLIBS" --include=Android.mk --include='*.mk' hardware device 2>/dev/null | xargs -r sed -i -E -e '/^[[:space:]]*LOCAL_[A-Z_]+[[:space:]]*\+?:?=[[:space:]]*('"$MCLIBS"')[[:space:]]*\\?[[:space:]]*$/d' -e 's/(^|[[:space:]])('"$MCLIBS"')([[:space:]]|$)/ /g'
+# libgscaler calls content-protection hooks that lived in libsecurepath: provide no-op versions
+GS=hardware/samsung_slsi-cm/exynos5/libgscaler
+cat > $GS/cp_stub.cpp <<'CPS'
+#include <stdint.h>
+#include "content_protect.h"
+extern "C" cpResult_t CP_Enable_Path_Protection(uint32_t protect_ip) { (void)protect_ip; return CP_SUCCESS; }
+extern "C" cpResult_t CP_Disable_Path_Protection(uint32_t protect_ip) { (void)protect_ip; return CP_SUCCESS; }
+CPS
+sed -i 's#^\([[:space:]]*\)libgscaler_obj.cpp \\#\1libgscaler_obj.cpp \\\n\1cp_stub.cpp \\#' $GS/Android.mk
+grep -n "cp_stub" $GS/Android.mk
 # libMcClient (Samsung secure-world client) has no source here; drop it from hardware libs (only needed for protected video)
 grep -rl "libMcClient" --include=Android.mk hardware device 2>/dev/null | xargs -r sed -i -e '/^[[:space:]]*LOCAL_SHARED_LIBRARIES[[:space:]]*+=[[:space:]]*libMcClient[[:space:]]*$/d' -e 's/[[:space:]]libMcClient\b//g'
 # gcc 4.8 flags warnings in Samsung code; do not treat warnings as errors in the kernel build
