@@ -16,7 +16,7 @@ mkdir -p /work/src && cd /work/src
 repo init -u https://github.com/Halium/android -b halium-7.1 --depth=1 --no-clone-bundle
 mkdir -p .repo/local_manifests
 cp /recipe/manifests/samsung_a8elte.xml .repo/local_manifests/
-repo sync -c --depth=1 --no-tags --no-clone-bundle -j4 --force-sync
+repo sync -c --no-tags --no-clone-bundle -j4 --force-sync
 df -h /work
 bash /recipe/scripts/prepare.sh
 bash /recipe/scripts/check-kernel.sh /work/src

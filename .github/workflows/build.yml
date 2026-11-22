@@ -18,7 +18,7 @@ jobs:
           sudo chown -R $(id -u):$(id -g) /mnt/work
           df -h / /mnt
       - name: Build in Ubuntu 18.04 container
-        run: docker run --rm -v /mnt/work:/work -v $GITHUB_WORKSPACE:/recipe -w /work ubuntu:18.04 bash /recipe/scripts/container-build.sh 2>&1 | tee /mnt/work/build.log
+        run: set -o pipefail; docker run --rm -v /mnt/work:/work -v $GITHUB_WORKSPACE:/recipe -w /work ubuntu:18.04 bash /recipe/scripts/container-build.sh 2>&1 | tee /mnt/work/build.log
       - name: Disk report
         if: always()
         run: df -h / /mnt; du -sh /mnt/work/* 2>/dev/null | sort -h | tail
