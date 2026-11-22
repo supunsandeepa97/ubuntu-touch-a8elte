@@ -9,16 +9,26 @@ if [ ! -d "$MAIN/arch" ]; then
 fi
 cd "$K"
 export ARCH=arm ANDROID_MAJOR_VERSION=n KCFLAGS="${KCFLAGS--Wno-error -fno-pie}"
+last=""
 for i in $(seq 1 400); do
   out=$(make "$@" 2>&1) && { echo "make OK after $((i-1)) fetches"; exit 0; }
   p=$(echo "$out" | grep -oE "No rule to make target [\`']([^'\`]*)['\`]" | head -1 | sed -E "s/.*[\`']([^'\`]*)['\`]/\1/")
   [ -z "$p" ] && p=$(echo "$out" | grep -oE "[^ :]+: No such file or directory" | head -1 | sed 's/: No such.*//')
   p=${p#$PWD/}; p=${p#$K/}
   if [ -z "$p" ]; then echo "$out" | tail -25; exit 1; fi
-  got=0
-  if [ ! -f "$MAIN/$p" ] && [[ "$p" != */* ]]; then
-    f=$(cd "$MAIN" && find arch include -name "$p" | head -1); [ -n "$f" ] && p="$f"
+  if [[ "$p" != */* ]]; then
+    # bare header name: prefer the folder of the file that includes it
+    inc=$(echo "$out" | grep -E "fatal error: $p: No such" | head -1 | cut -d: -f1)
+    inc=${inc#$PWD/}; inc=${inc#$K/}
+    if [ -n "$inc" ] && [ -f "$MAIN/$(dirname "$inc")/$p" ]; then
+      p="$(dirname "$inc")/$p"
+    else
+      f=$(cd "$MAIN" && find arch include -name "$p" | head -1); [ -n "$f" ] && p="$f"
+    fi
   fi
+  if [ "$p" = "$last" ]; then echo "loop on $p"; echo "$out" | tail -15; exit 1; fi
+  last="$p"
+  got=0
   for cand in "$p" "${p%.o}.c" "${p%.o}.S"; do
     if [ -f "$MAIN/$cand" ]; then mkdir -p "$(dirname "$cand")"; cp "$MAIN/$cand" "$cand"; echo "fetched $cand"; got=1; break; fi
   done
