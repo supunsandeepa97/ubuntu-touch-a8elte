@@ -32,6 +32,10 @@ fi
 # Samsung gud (MobiCore) Makefiles use source-relative paths that break separate-output kernel builds
 find kernel/samsung/slte/drivers/gud -name Makefile | xargs sed -i 's#^GUD_ROOT_FOLDER[[:space:]]*:=[[:space:]]*drivers#GUD_ROOT_FOLDER := $(srctree)/drivers#'
 grep -rn "GUD_ROOT_FOLDER :=" kernel/samsung/slte/drivers/gud | head
+# Samsung Makefiles list objects as subdir/file.o; separate-output builds then need the output subdirs to exist. Pre-create them all.
+for OUTD in /tmp/kout-stub /work/src/out/target/product/slte/obj/KERNEL_OBJ; do
+  (cd kernel/samsung/slte && find . -type d -not -path './.git*' | while read -r d; do mkdir -p "$OUTD/$d"; done)
+done
 # gcc 4.8 flags warnings in Samsung code; do not treat warnings as errors in the kernel build
 KM=kernel/samsung/slte
 for f in $KM/Makefile $KM/arch/arm/Makefile; do sed -i -E 's/(^|[[:space:]])-Werror([[:space:]]|$)/ /g' $f; done
