@@ -30,7 +30,8 @@ if grep -q "tima_uevent/tima_uevent.o" $KS/Makefile; then
   sed -i 's#tima_uevent/tima_uevent.o#tima_uevent.o#' $KS/Makefile
 fi
 # Samsung gud (MobiCore) Makefiles use source-relative paths that break separate-output kernel builds
-for f in kernel/samsung/slte/drivers/gud/gud-*/Makefile; do sed -i 's#^GUD_ROOT_FOLDER := drivers#GUD_ROOT_FOLDER := $(srctree)/drivers#' "$f"; done
+find kernel/samsung/slte/drivers/gud -name Makefile | xargs sed -i 's#^GUD_ROOT_FOLDER[[:space:]]*:=[[:space:]]*drivers#GUD_ROOT_FOLDER := $(srctree)/drivers#'
+grep -rn "GUD_ROOT_FOLDER :=" kernel/samsung/slte/drivers/gud | head
 # gcc 4.8 flags warnings in Samsung code; do not treat warnings as errors in the kernel build
 KM=kernel/samsung/slte
 for f in $KM/Makefile $KM/arch/arm/Makefile; do sed -i -E 's/(^|[[:space:]])-Werror([[:space:]]|$)/ /g' $f; done
